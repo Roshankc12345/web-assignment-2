@@ -1,21 +1,27 @@
 <?php
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $name = trim($_POST["name"]);
-    $dob = trim($_POST["dob"]);
-    $email = trim($_POST["email"]);
-    $address = trim($_POST["address"]);
-    $aadhar = trim($_POST["aadhar"]);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $file = 'data.json'; // Path to JSON file
 
-    // Basic Validation
-    if (!empty($name) && !empty($dob) && !empty($email) && !empty($address) && !empty($aadhar)) {
-        if (filter_var($email, FILTER_VALIDATE_EMAIL) && preg_match("/^\d{12}$/", $aadhar)) {
-            echo "success";
-        } else {
-            echo "Invalid email or Aadhar number.";
-        }
-    } else {
-        echo "All fields are required.";
-    }
+    // Read existing data
+    $currentData = file_get_contents($file);
+    $dataArray = json_decode($currentData, true);
+
+    // Get form data
+    $newUser = [
+        "name" => $_POST['name'],
+        "dob" => $_POST['dob'],
+        "email" => $_POST['email'],
+        "address" => $_POST['address'],
+        "aadhar" => $_POST['aadhar']
+    ];
+
+    // Add new user to the array
+    $dataArray[] = $newUser;
+
+    // Save updated data back to the JSON file
+    file_put_contents($file, json_encode($dataArray, JSON_PRETTY_PRINT));
+
+    echo "success";
 } else {
     echo "Invalid request.";
 }
